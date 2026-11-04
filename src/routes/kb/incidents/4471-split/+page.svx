@@ -2,7 +2,7 @@
 layout: runbook
 title: '#4471 · two causes in one ticket'
 owner: WebDevCaveman
-status: open
+status: closed
 reviewed: 2026-11-04
 signature: v1.eyJzdWIiOiIzODMzIiwiYXVkIjoiY2hhbGxlbmdlOndoYXQtaXQtc2hvd3MiLCJpYXQiOjE3OTM3OTI4NTMsImV4cCI6MTc5Mzg3OTI1M30.45D6H_G3wbALWqJbgYFN5EKXGrRCWc3hnnpUBmwwIWE
 ---
@@ -14,7 +14,8 @@ signature: v1.eyJzdWIiOiIzODMzIiwiYXVkIjoiY2hhbGxlbmdlOndoYXQtaXQtc2hvd3MiLCJpYX
 </script>
 
 [#4471](/kb/incidents/4471) says one issue with one fix queued. The reports in it hold two causes,
-so that fix will not close all of them. Each cause now has its own ticket.
+so one outcome does not fit all of them. Each cause has its own ticket. Engineering closed #4471 on
+5 October with a different outcome for each cause: `parser` is fixed, `hint` is won't fix.
 
 <CauseTable ticket={4471} />
 
@@ -25,15 +26,18 @@ Its ticket is linked below.
 
 **`parser`:** [ticket 1](https://github.com/WebDevCaveman/mega-s01e03-what-it-shows/issues/1).
 The shared parser reads every date month first, and our tenants write the day first. A date comes
-out with day and month swapped. This is what #4471 describes.
+out with day and month swapped. This is what #4471 describes. **Fixed:** `fix(dates): parse dd/mm for
+eu locales`.
 
 **`hint`:** [ticket 2](https://github.com/WebDevCaveman/mega-s01e03-what-it-shows/issues/2).
 The `booking-v3` form prints `MM/DD/YYYY` under its date field and then reads the date the
 tenant's way. People type what the hint says, and the date comes out swapped. The symptom matches
-`parser`, but the fix is different: the hint has to change.
+`parser`, but the cause is different, so the parser fix does not reach it. **Won't fix:** the
+`booking-v3` form is retired.
 
 <Callout kind="warn">
-Fixing the parser does not fix the hint. Keep the tickets apart until both fixes ship.
+Do not record all of #4471 as fixed. The parser fix closes `parser` only. `hint` ends because the
+form is retired, not because the bug was fixed.
 </Callout>
 
 ## How to tell them apart
@@ -52,7 +56,7 @@ Count unique report ids. The export pages overlap, so a report can appear twice.
 ## Still open
 
 The reports in the note under the table read as a one-day move, not a swap. The export does not
-show why, so they stay filed by tenant and listed in the `parser` ticket. Someone should read them
-again before that ticket closes.
+show why, so they stay filed by tenant and listed in the `parser` ticket. The parser fix may not
+cover them. If reports like these keep coming, open a new ticket.
 
 <RenderStamp {signature} />
