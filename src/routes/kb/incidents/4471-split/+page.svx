@@ -1,0 +1,58 @@
+---
+layout: runbook
+title: '#4471 · two causes in one ticket'
+owner: WebDevCaveman
+status: open
+reviewed: 2026-11-04
+signature: v1.eyJzdWIiOiIzODMzIiwiYXVkIjoiY2hhbGxlbmdlOndoYXQtaXQtc2hvd3MiLCJpYXQiOjE3OTM3OTI4NTMsImV4cCI6MTc5Mzg3OTI1M30.45D6H_G3wbALWqJbgYFN5EKXGrRCWc3hnnpUBmwwIWE
+---
+
+<script>
+  import CauseTable from '#lib/kb/CauseTable.svelte';
+  import Callout from '#lib/kb/Callout.svelte';
+  import RenderStamp from '#lib/kb/RenderStamp.svelte';
+</script>
+
+[#4471](/kb/incidents/4471) says one issue with one fix queued. The reports in it hold two causes,
+so that fix will not close all of them. Each cause now has its own ticket.
+
+<CauseTable ticket={4471} />
+
+The table marks the second cause as having no ticket of its own because it reads only the export.
+Its ticket is linked below.
+
+## The two causes
+
+**`parser`:** [ticket 1](https://github.com/WebDevCaveman/mega-s01e03-what-it-shows/issues/1).
+The shared parser reads every date month first, and our tenants write the day first. A date comes
+out with day and month swapped. This is what #4471 describes.
+
+**`hint`:** [ticket 2](https://github.com/WebDevCaveman/mega-s01e03-what-it-shows/issues/2).
+The `booking-v3` form prints `MM/DD/YYYY` under its date field and then reads the date the
+tenant's way. People type what the hint says, and the date comes out swapped. The symptom matches
+`parser`, but the fix is different: the hint has to change.
+
+<Callout kind="warn">
+Fixing the parser does not fix the hint. Keep the tickets apart until both fixes ship.
+</Callout>
+
+## How to tell them apart
+
+Look at the tenant and the way in, as `src/lib/kb/causes.ts` does:
+
+1. Form report from a tenant on `booking-v3`: `hint`.
+2. Any other report from a day-first tenant: `parser`.
+
+The subject line cannot separate them: both causes use the same subjects, which is how they were
+merged ([decision 0001](/kb/decisions/0001-dedupe-by-subject)). The intake tag cannot either. It
+is a guess from the browser, and the table shows how often it disagrees with the cause.
+
+Count unique report ids. The export pages overlap, so a report can appear twice.
+
+## Still open
+
+The reports in the note under the table read as a one-day move, not a swap. The export does not
+show why, so they stay filed by tenant and listed in the `parser` ticket. Someone should read them
+again before that ticket closes.
+
+<RenderStamp {signature} />
